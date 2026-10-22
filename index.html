@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Portfolio of Nitya Sunil Patil - MERN Stack Developer & Android App Developer. Showcasing modern web and mobile applications, skills, and projects.">
+    <meta name="keywords"
+        content="Nitya Patil, Full Stack Developer, MERN, React, Node.js, Android Developer, Java, Firebase, Portfolio">
+    <meta name="author" content="Nitya Sunil Patil">
+    <title>Nitya Sunil Patil - Portfolio</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a78bfa'/%3E%3Cstop offset='100%25' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='sans-serif' font-size='44' font-weight='800' fill='%23ffffff'%3ENP%3C/text%3E%3Ccircle cx='78' cy='22' r='6' fill='%2310b981'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="#home" class="logo">
+            <span class="logo-badge">
+                NP
+                <span class="logo-status-dot"></span>
+            </span>
+            <span class="logo-name">Nitya <span class="logo-surname">Patil</span></span>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li class="mobile-only"><a href="#contact" class="hire-btn"
+                    style="width: 100%; justify-content: center;">Contact Me</a></li>
+        </ul>
+        <div class="nav-right">
+            <a href="#contact" class="hire-btn desktop-hire-btn">
+                <i class="fas fa-paper-plane"></i> Contact Me
+            </a>
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 1. Home / Hero Section -->
+    <section id="home">
+        <div class="hero-content">
+            <h1 id="hero-name">Hi, I'm<br><span>Nitya Sunil Patil</span></h1>
+            <div class="hero-role" id="hero-role">
+                <i class="fas fa-code"></i> MERN Stack Developer | Android App Developer
+            </div>
+            <p class="hero-desc" id="hero-desc">
+                I build modern web applications and Android applications that solve real-world problems. I love turning
+                ideas into scalable digital products.
+            </p>
+            <div class="hero-btns" id="hero-btns">
+                <a href="#projects" class="btn-primary">View My Projects <i class="fas fa-arrow-right"></i></a>
+                <a href="#contact" class="btn-outline">Get In Touch</a>
+            </div>
+            <div class="social-icons" id="hero-socials">
+                <a href="https://www.linkedin.com/in/nitya-p-5b808425b/" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/Nityapatil03" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-github"></i></a>
+                <a href="mailto:nityaspatil06@gmail.com"><i class="fas fa-envelope"></i></a>
+                <a href="https://wa.me/917823034424" target="_blank" rel="noopener noreferrer"><i
+                        class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+        <div class="hero-image-wrapper">
+            <div class="hero-image-container">
+                <img id="hero-avatar-img" src="profile.png" alt="Nitya Sunil Patil">
+            </div>
+            <div class="availability-badge" id="hero-availability">
+                <!-- <span></span> Available for Freelance Projects -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. About Me Section -->
+    <section id="about">
+        <div class="section-header">
+            <div class="section-tag">About Me</div>
+            <h2 class="section-title">Passionate Developer with a Creative Mind</h2>
+            <p class="section-subtitle">A glimpse into my background, passion for software engineering, and core focus
+                areas.</p>
+        </div>
+        <div class="about-grid">
+            <div class="about-img-box">
+                <img id="about-avatar-img" src="profile.png" alt="About Nitya">
+                <div class="experience-tag" id="about-exp-tag">
+                    2+
+                    <span>Years of Learning & Building</span>
+                </div>
+            </div>
+            <div class="about-details">
+                <p id="about-bio">
+                    I am Nitya Sunil Patil, a Full Stack Developer with experience in building web applications using
+                    the MERN stack and creating Android applications. I enjoy solving problems, learning new
+                    technologies, and building user-friendly applications that make a difference.
+                </p>
+                <div class="info-grid" id="about-info-grid">
+                    <!-- Populated dynamically via js/main.js -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Skills Section -->
+    <section id="skills">
+        <div class="section-header">
+            <div class="section-tag">My Skills</div>
+            <h2 class="section-title">Technologies I Work With</h2>
+            <p class="section-subtitle">Modern technologies and engineering tools I leverage to build scalable and
+                efficient applications.</p>
+        </div>
+        <!-- Category Filters -->
+        <div class="skills-filter-container" id="skills-filter"></div>
+        <!-- Skills Grid Container -->
+        <div class="skills-grid" id="skills-grid">
+            <!-- Populated dynamically via js/main.js -->
+        </div>
+    </section>
+
+    <!-- 4. Projects Section -->
+    <section id="projects">
+        <div class="section-header">
+            <div class="section-tag">My Projects</div>
+            <h2 class="section-title">Some of My Recent Work</h2>
+            <p class="section-subtitle">Real-world applications spanning web platforms, full-stack architectures, and
+                native Android solutions.</p>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="projects-controls">
+            <div class="project-filters" id="projects-filter"></div>
+            <div class="project-search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="project-search" placeholder="Search projects by name, tag...">
+            </div>
+        </div>
+
+        <!-- Projects Grid Container -->
+        <div class="projects-grid" id="projects-grid">
+            <!-- Populated dynamically via js/main.js -->
+        </div>
+    </section>
+
+    <!-- 5. Services Section -->
+    <section id="services">
+        <div class="section-header">
+            <div class="section-tag">My Services</div>
+            <h2 class="section-title">What I Can Do for You</h2>
+            <p class="section-subtitle">High-quality engineering services tailored to bring ideas to reality with clean
+                code and modern design.</p>
+        </div>
+        <div class="services-grid" id="services-grid">
+            <!-- Populated dynamically via js/main.js -->
+        </div>
+    </section>
+
+    <!-- 6. Contact Section -->
+    <section id="contact">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <div class="section-tag" style="text-align: left; margin-bottom: 12px;">Get In Touch</div>
+                <h2>Let’s Work Together</h2>
+                <p>Have an ambitious project, freelance gig, or full-time opportunity? Drop me a message and let's make
+                    it happen.</p>
+                <div class="contact-detail-list" id="contact-details-list">
+                    <!-- Populated dynamically via js/main.js -->
+                </div>
+            </div>
+
+            <form class="contact-form" id="contact-form">
+                <input type="text" id="contact-name" placeholder="Your Full Name" required>
+                <input type="email" id="contact-email" placeholder="Your Email Address" required>
+                <select id="contact-type" required>
+                    <option value="" disabled selected>Select Project Type</option>
+                    <option value="Web Development">Web Development (React / MERN)</option>
+                    <option value="Android App">Android App Development</option>
+                    <option value="Full-Stack Application">Full-Stack Application</option>
+                    <option value="REST API Integration">REST API & Backend</option>
+                    <option value="Other">Other Inquiry</option>
+                </select>
+                <textarea id="contact-message" placeholder="Describe your project, timeline, or requirements..."
+                    required></textarea>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+                <div id="contact-toast" class="toast-msg"></div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div id="footer-copy">
+            © 2026 Nitya Sunil Patil. All Rights Reserved.
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="#home" style="color: var(--text-muted); text-decoration: none; font-size: 13px;">Back to Top ↑</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/store.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
