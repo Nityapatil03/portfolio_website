@@ -3,8 +3,14 @@
  * Handles client-side persistence with LocalStorage, defaults, and event dispatching.
  */
 
+// LocalStorage & Session Keys
 const STORAGE_KEY = 'portfolio_cms_data_v1';
 const AUTH_KEY = 'portfolio_cms_auth_session';
+
+// Firebase Realtime Database Sync Configuration
+// Change this URL or configure it in the Admin Settings tab
+const FIREBASE_DB_URL_DEFAULT = 'https://portfolio-cms-black-default-rtdb.firebaseio.com';
+const FIREBASE_URL_KEY = 'portfolio_cms_firebase_url_v1';
 
 const DEFAULT_PORTFOLIO_DATA = {
     profile: {
@@ -131,7 +137,176 @@ const DEFAULT_PORTFOLIO_DATA = {
 };
 
 const PortfolioStore = {
-    // Read entire dataset
+    _sse: null,
+
+    // Firebase Cloud Sync configuration helpers
+    getFirebaseUrl() {
+        const customUrl = localStorage.getItem(FIREBASE_URL_KEY);
+        if (customUrl && customUrl.trim()) {
+            return customUrl.trim();
+        }
+        return (FIREBASE_DB_URL_DEFAULT || '').trim();
+    },
+
+    setFirebaseUrl(url) {
+        if (!url) {
+            localStorage.removeItem(FIREBASE_URL_KEY);
+        } else {
+            localStorage.setItem(FIREBASE_URL_KEY, url.trim());
+        }
+        // Restart realtime listener with new URL
+        this.initRealtimeListener();
+        return this.getFirebaseUrl();
+    },
+
+    isFirebaseConfigured() {
+        const url = this.getFirebaseUrl();
+        if (!url) return false;
+        return (url.startsWith('https://') && (url.includes('firebaseio.com') || url.includes('firebasedatabase.app')));
+    },
+
+    // Test connection to Firebase Realtime Database
+    async testConnection(url) {
+        const targetUrl = (url || this.getFirebaseUrl() || '').trim().replace(/\/+$/, '');
+        if (!targetUrl || !targetUrl.startsWith('https://')) {
+            return { success: false, message: 'Invalid URL. Must start with https://' };
+        }
+        try {
+            const res = await fetch(`${targetUrl}/portfolio.json`, {
+                cache: 'no-store'
+            });
+            if (res.ok) {
+                return { success: true, message: 'Connected successfully to Firebase Realtime Database!' };
+            } else if (res.status === 401 || res.status === 403) {
+                return { success: false, message: 'Permission Denied: In Firebase Console -> Realtime Database -> Rules, set ".read": true, ".write": true' };
+            } else {
+                return { success: false, message: `Firebase returned status: ${res.status}` };
+            }
+        } catch (err) {
+            return { success: false, message: `Could not reach Firebase: ${err.message}` };
+        }
+    },
+
+    // Fetch latest data from Firebase cloud and update local store
+    async syncFromFirebase() {
+        if (!this.isFirebaseConfigured()) return null;
+        const cleanUrl = this.getFirebaseUrl().replace(/\/+$/, '');
+
+        try {
+            const res = await fetch(`${cleanUrl}/portfolio.json`, {
+                cache: 'no-store'
+            });
+            if (!res.ok) {
+                console.warn('[PortfolioStore] Firebase read status:', res.status);
+                return null;
+            }
+            const remoteData = await res.json();
+
+            // If Firebase is completely empty, automatically seed it with local data!
+            if (remoteData === null) {
+                console.log('[PortfolioStore] Firebase is empty. Seeding initial portfolio data to cloud...');
+                const localData = this.getData();
+                await this.syncToFirebase(localData);
+                return localData;
+            }
+
+            if (remoteData && typeof remoteData === 'object' && remoteData.profile) {
+                // Ensure messages is an array if stored as Firebase push objects
+                if (remoteData.messages && !Array.isArray(remoteData.messages) && typeof remoteData.messages === 'object') {
+                    remoteData.messages = Object.entries(remoteData.messages).map(([id, val]) => ({
+                        id: val.id || id,
+                        ...val
+                    })).reverse();
+                }
+
+                // Update localStorage cache without re-triggering syncToFirebase
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteData));
+                window.dispatchEvent(new CustomEvent('portfolioDataUpdated', { detail: remoteData }));
+                return remoteData;
+            }
+        } catch (err) {
+            console.warn('[PortfolioStore] Firebase sync error:', err.message);
+        }
+        return null;
+    },
+
+    // Push local data to Firebase cloud
+    async syncToFirebase(data) {
+        if (!this.isFirebaseConfigured()) return false;
+        const cleanUrl = this.getFirebaseUrl().replace(/\/+$/, '');
+
+        try {
+            const payload = data || this.getData();
+            const res = await fetch(`${cleanUrl}/portfolio.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return res.ok;
+        } catch (err) {
+            console.warn('[PortfolioStore] Firebase save error:', err.message);
+            return false;
+        }
+    },
+
+    // Push a contact message directly to Firebase cloud
+    async syncMessageToFirebase(msg) {
+        if (!this.isFirebaseConfigured()) return false;
+        const cleanUrl = this.getFirebaseUrl().replace(/\/+$/, '');
+
+        try {
+            const res = await fetch(`${cleanUrl}/portfolio/messages.json`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(msg)
+            });
+            return res.ok;
+        } catch (err) {
+            console.warn('[PortfolioStore] Firebase message error:', err.message);
+            return false;
+        }
+    },
+
+    // Start live Server-Sent Events listener for real-time updates across browsers
+    initRealtimeListener() {
+        if (!this.isFirebaseConfigured() || typeof EventSource === 'undefined') return;
+        const cleanUrl = this.getFirebaseUrl().replace(/\/+$/, '');
+
+        try {
+            if (this._sse) {
+                try { this._sse.close(); } catch (e) { }
+            }
+            this._sse = new EventSource(`${cleanUrl}/portfolio.json`);
+
+            this._sse.addEventListener('put', (e) => {
+                try {
+                    const parsed = JSON.parse(e.data);
+                    if (parsed && parsed.path === '/' && parsed.data && parsed.data.profile) {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed.data));
+                        window.dispatchEvent(new CustomEvent('portfolioDataUpdated', { detail: parsed.data }));
+                    } else if (parsed && parsed.path !== '/') {
+                        // Subpath was modified, re-sync whole data
+                        this.syncFromFirebase();
+                    }
+                } catch (parseErr) { }
+            });
+
+            this._sse.addEventListener('patch', () => {
+                this.syncFromFirebase();
+            });
+
+            this._sse.onerror = () => {
+                if (this._sse) {
+                    try { this._sse.close(); } catch (e) { }
+                    this._sse = null;
+                }
+            };
+        } catch (err) {
+            console.warn('[PortfolioStore] Realtime listener error:', err.message);
+        }
+    },
+
+    // Read entire dataset (instant from local cache)
     getData() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
@@ -146,11 +321,13 @@ const PortfolioStore = {
         }
     },
 
-    // Save entire dataset
+    // Save entire dataset (saves to localStorage AND pushes to Firebase cloud)
     setData(data) {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             window.dispatchEvent(new CustomEvent('portfolioDataUpdated', { detail: data }));
+            // Asynchronously sync to cloud
+            this.syncToFirebase(data);
             return true;
         } catch (e) {
             console.error("Failed to write to localStorage:", e);

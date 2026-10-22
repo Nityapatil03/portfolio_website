@@ -4,7 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial Render
+    // Initial Render from cache or defaults (instant 0ms render)
     renderPortfolio();
 
     // Listen for real-time updates from store or other tabs
@@ -15,6 +15,25 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', (e) => {
         if (e.key === 'portfolio_cms_data_v1') {
             renderPortfolio();
+        }
+    });
+
+    // Cloud Database Sync: fetch latest changes and listen for live updates
+    if (window.PortfolioStore) {
+        window.PortfolioStore.syncFromFirebase();
+        window.PortfolioStore.initRealtimeListener();
+    }
+
+    // Refresh when user returns to this tab
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && window.PortfolioStore) {
+            window.PortfolioStore.syncFromFirebase();
+        }
+    });
+
+    window.addEventListener('focus', () => {
+        if (window.PortfolioStore) {
+            window.PortfolioStore.syncFromFirebase();
         }
     });
 
