@@ -1,1 +1,6 @@
-# Private Admin Dashboard
+# Exclude public portfolio files from Admin_repository
+index.html
+favicon.svg
+profile.jpg
+profile.png
+vercel.json
