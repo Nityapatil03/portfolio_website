@@ -1,6 +1,4 @@
-# Exclude public portfolio files from Admin_repository
-index.html
-favicon.svg
-profile.jpg
-profile.png
-vercel.json
+# Private Admin Files (Do NOT push to portfolio_website)
+admin.html
+css/admin.css
+js/admin.js
